@@ -87,7 +87,7 @@ export default function Cart() {
                   <div className="cart-item-details">
                     <h3>{item.title}</h3>
                     <p className="cart-item-author">by {item.author}</p>
-                    <p className="cart-item-price">${item.price.toFixed(2)}</p>
+                    <p className="cart-item-price">K {item.price.toFixed(2)}</p>
                   </div>
                 </div>
                 
@@ -120,7 +120,7 @@ export default function Cart() {
           <div className="cart-summary">
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${calculateTotal().toFixed(2)}</span>
+              <span>K {calculateTotal().toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
@@ -128,7 +128,7 @@ export default function Cart() {
             </div>
             <div className="summary-row total">
               <span>Total</span>
-              <span>${calculateTotal().toFixed(2)}</span>
+              <span>K {calculateTotal().toFixed(2)}</span>
             </div>
             
             <button 

@@ -102,7 +102,7 @@ export default function BookList() {
               </div>
               <p className="book-description">{book.description}</p>
               <div className="book-footer">
-                <span className="book-price">${book.price.toFixed(2)}</span>
+                <span className="book-price">K{book.price.toFixed(2)}</span>
                 <button 
                   className="add-to-cart-btn"
                   onClick={() => addToCart(book)}
