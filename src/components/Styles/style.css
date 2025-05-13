@@ -1,0 +1,37 @@
+.page {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+  
+  .title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
