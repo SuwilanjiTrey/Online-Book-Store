@@ -66,7 +66,7 @@ export default function Orders() {
                       <h4>{item.title}</h4>
                       <p className="order-item-author">by {item.author}</p>
                       <div className="order-item-price-qty">
-                        <span className="order-item-price">${item.price.toFixed(2)}</span>
+                        <span className="order-item-price">K {item.price.toFixed(2)}</span>
                         <span className="order-item-qty">Qty: {item.quantity}</span>
                       </div>
                     </div>
@@ -77,7 +77,7 @@ export default function Orders() {
               <div className="order-summary">
                 <div className="order-total">
                   <span>Total</span>
-                  <span>${order.total.toFixed(2)}</span>
+                  <span>K {order.total.toFixed(2)}</span>
                 </div>
                 <div className="order-delivery">
                   <Clock size={14} />
