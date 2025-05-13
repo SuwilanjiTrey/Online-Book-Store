@@ -61,7 +61,7 @@ export default function App() {
             <div className="footer-section">
               <h3>Contact</h3>
               <p>support@bookworm.com</p>
-              <p>+1 (555) 123-4567</p>
+              <p>+260 9xxxxxxxx</p>
             </div>
             <div className="footer-section">
               <h3>Quick Links</h3>
