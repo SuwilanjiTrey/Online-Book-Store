@@ -6,7 +6,7 @@ export default function Orders() {
   const [orders, setOrders] = React.useState([]);
   
   React.useEffect(() => {
-    const storedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const storedOrders = JSON.parse(localStorage.getItgtem('orders')) || [];
     setOrders(storedOrders);
   }, []);
 
