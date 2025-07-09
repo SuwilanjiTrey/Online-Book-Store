@@ -6,48 +6,48 @@ export default function BookList() {
   const [books, setBooks] = React.useState([
     { 
       id: 1, 
-      title: 'Clean Code', 
-      author: 'Robert C. Martin', 
+      title: 'Applying UML and Patterns: An Introduction to Object-Oriented Analysis and Design and Iterative Developmen', 
+      author: 'Craig Larman', 
       price: 29.99,
       rating: 4.8,
-      coverImg: 'https://images-na.ssl-images-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg',
-      description: "Even bad code can function. But if code isn't clean, it can bring a development organization to its knees.",
-      category: 'Programming'
+      coverImg: '/craiglarman.jpg',
+      description: "This book makes learning UML enjoyable and pragmatic by incrementally introducing it as an intuitive language for specifying the artifacts of object analysis and design. It is a well written introduction to UML and object methods by an expert practitioner.",
+      category: 'design'
     },
     { 
       id: 2, 
-      title: 'The Pragmatic Programmer', 
-      author: 'Andrew Hunt & David Thomas', 
+      title: 'Software Engineering: A Practitioners Approach 9th Ed.', 
+      author: 'Roger S Pressman', 
       price: 34.99,
       rating: 4.7,
-      coverImg: 'https://images-na.ssl-images-amazon.com/images/I/51cUVaBWZzL._SX380_BO1,204,203,200_.jpg',
-      description: 'Straight from the programming trenches, The Pragmatic Programmer cuts through the increasing specialization and technicalities of modern software development.',
-      category: 'Programming'
+      coverImg: '/pressman.jpg',
+      description: 'Straight from the programming trenches, This book give the fundamental basics of software engineering and give the principles needed for good software design.',
+      category: 'design'
     },
     { 
       id: 3, 
-      title: 'Design Patterns', 
-      author: 'Erich Gamma et al.', 
+      title: 'Object-oriented Software Engineering', 
+      author: 'Timothy Lethbridge | Goodreads', 
       price: 39.99,
       rating: 4.6,
-      coverImg: 'https://images-na.ssl-images-amazon.com/images/I/51szD9HC9pL._SX395_BO1,204,203,200_.jpg',
+      coverImg: '/timothylethbridge.jpeg',
       description: 'Capturing a wealth of experience about the design of object-oriented software, this book presents 23 patterns that solve various design problems.',
       category: 'Programming'
     },
     { 
       id: 4, 
-      title: 'Eloquent JavaScript', 
-      author: 'Marijn Haverbeke', 
+      title: 'Introduction to Java Programming', 
+      author: 'Y. Daniel Liang | Goodreads', 
       price: 27.99,
       rating: 4.5,
-      coverImg: 'https://eloquentjavascript.net/img/cover.jpg',
-      description: 'This book provides an in-depth introduction to JavaScript, covering the language itself and its use in web browsers.',
+      coverImg: '/liang.jpg',
+      description: 'This book provides an in-depth introduction to Java, covering the language itself and its use.',
       category: 'Programming'
     },
   ]);
   
   const [selectedCategory, setSelectedCategory] = React.useState('All');
-  const categories = ['All', 'Programming', 'Fiction', 'Business', 'Science'];
+  const categories = ['All', 'Programming', 'Fiction', 'Business', 'Science', 'design'];
 
   const addToCart = (book) => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -91,7 +91,7 @@ export default function BookList() {
         {filteredBooks.map((book) => (
           <div className="book-card" key={book.id}>
             <div className="book-cover">
-              <img src="/api/placeholder/200/300" alt={book.title} />
+              <img src={book.coverImg} alt={book.title} />
             </div>
             <div className="book-info">
               <h3>{book.title}</h3>
