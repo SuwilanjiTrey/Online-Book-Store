@@ -61,7 +61,7 @@ export default function Orders() {
               <div className="order-items">
                 {order.items.map(item => (
                   <div className="order-item" key={item.id}>
-                    <img src="/api/placeholder/60/90" alt={item.title} className="order-item-cover" />
+                    <img src={item.coverImg} alt={item.title} className="order-item-cover" />
                     <div className="order-item-details">
                       <h4>{item.title}</h4>
                       <p className="order-item-author">by {item.author}</p>

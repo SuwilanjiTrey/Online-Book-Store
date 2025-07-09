@@ -83,7 +83,7 @@ export default function Cart() {
             {cart.map(item => (
               <div className="cart-item" key={item.id}>
                 <div className="cart-item-info">
-                  <img src="/api/placeholder/80/120" alt={item.title} className="cart-item-cover" />
+                  <img src={item.coverImg} alt={item.title} className="cart-item-cover" />
                   <div className="cart-item-details">
                     <h3>{item.title}</h3>
                     <p className="cart-item-author">by {item.author}</p>
