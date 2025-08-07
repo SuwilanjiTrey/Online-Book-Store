@@ -8,6 +8,262 @@ import Navigation from './components/navigation';
 import AdminPanel from './components/Admin';
 import './App.css';
 
+// Move LoginModal outside as a separate component to prevent re-renders
+const LoginModal = ({ 
+  showLoginModal, 
+  setShowLoginModal, 
+  loginForm, 
+  setLoginForm, 
+  setCurrentUser 
+}) => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(u => 
+      u.email === loginForm.email && u.password === loginForm.password
+    );
+
+    if (user) {
+      setCurrentUser(user);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      setShowLoginModal(false);
+      setLoginForm({ email: '', password: '', name: '', isRegistering: false });
+      
+      // Redirect admin users to admin panel
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    } else {
+      alert('Invalid email or password');
+    }
+  };
+
+  const handleRegister = () => {
+    if (!loginForm.name || !loginForm.email || !loginForm.password) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // Check if user already exists
+    if (users.find(u => u.email === loginForm.email)) {
+      alert('User with this email already exists');
+      return;
+    }
+
+    const newUser = {
+      id: Math.max(...users.map(u => u.id), 0) + 1,
+      name: loginForm.name,
+      email: loginForm.email,
+      password: loginForm.password,
+      role: "user" // Default role
+    };
+
+    const updatedUsers = [...users, newUser];
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    setCurrentUser(newUser);
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    setShowLoginModal(false);
+    setLoginForm({ email: '', password: '', name: '', isRegistering: false });
+    navigate('/');
+  };
+
+  if (!showLoginModal) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        background: 'white',
+        padding: '40px',
+        borderRadius: '16px',
+        width: '90%',
+        maxWidth: '400px',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+        position: 'relative'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '30px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '12px',
+            borderRadius: '12px',
+            display: 'inline-block',
+            marginBottom: '16px'
+          }}>
+            <Book size={32} color="white" />
+          </div>
+          <h2 style={{ margin: 0, color: '#333' }}>
+            {loginForm.isRegistering ? 'Create Account' : 'Welcome Back'}
+          </h2>
+          <p style={{ margin: '8px 0 0', color: '#666' }}>
+            {loginForm.isRegistering 
+              ? 'Join Bookworm today' 
+              : 'Sign in to your account'
+            }
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {loginForm.isRegistering && (
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={loginForm.name}
+                onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '2px solid #e1e5e9',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+                placeholder="Enter your full name"
+              />
+            </div>
+          )}
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={loginForm.email}
+              onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e1e5e9',
+                borderRadius: '8px',
+                fontSize: '14px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+              Password
+            </label>
+            <input
+              type="password"
+              value={loginForm.password}
+              onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e1e5e9',
+                borderRadius: '8px',
+                fontSize: '14px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <div style={{ marginTop: '10px' }}>
+            <button
+              onClick={loginForm.isRegistering ? handleRegister : handleLogin}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginBottom: '16px'
+              }}
+            >
+              {loginForm.isRegistering ? 'Create Account' : 'Sign In'}
+            </button>
+
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <span style={{ color: '#666', fontSize: '14px' }}>
+                {loginForm.isRegistering ? 'Already have an account?' : "Don't have an account?"}
+              </span>
+              <button
+                onClick={() => setLoginForm({
+                  ...loginForm, 
+                  isRegistering: !loginForm.isRegistering
+                })}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#667eea',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginLeft: '5px'
+                }}
+              >
+                {loginForm.isRegistering ? 'Sign In' : 'Sign Up'}
+              </button>
+            </div>
+
+            {/* Demo Credentials */}
+            <div style={{
+              background: '#f8f9fa',
+              padding: '15px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              color: '#666'
+            }}>
+              <strong>Demo Credentials:</strong><br/>
+              Admin: admin@bookworm.com / admin123<br/>
+              User: john@example.com / user123
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowLoginModal(false)}
+          style={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+            background: 'none',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            color: '#666'
+          }}
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [showLoginModal, setShowLoginModal] = React.useState(false);
@@ -111,68 +367,6 @@ export default function App() {
     }
   };
 
-  // Login Component with Navigation Hook
-  const LoginHandler = () => {
-    const navigate = useNavigate();
-
-    const handleLogin = () => {
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(u => 
-        u.email === loginForm.email && u.password === loginForm.password
-      );
-
-      if (user) {
-        setCurrentUser(user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        setShowLoginModal(false);
-        setLoginForm({ email: '', password: '', name: '', isRegistering: false });
-        
-        // Redirect admin users to admin panel
-        if (user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/');
-        }
-      } else {
-        alert('Invalid email or password');
-      }
-    };
-
-    const handleRegister = () => {
-      if (!loginForm.name || !loginForm.email || !loginForm.password) {
-        alert('Please fill in all fields');
-        return;
-      }
-
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      
-      // Check if user already exists
-      if (users.find(u => u.email === loginForm.email)) {
-        alert('User with this email already exists');
-        return;
-      }
-
-      const newUser = {
-        id: Math.max(...users.map(u => u.id), 0) + 1,
-        name: loginForm.name,
-        email: loginForm.email,
-        password: loginForm.password,
-        role: "user" // Default role
-      };
-
-      const updatedUsers = [...users, newUser];
-      localStorage.setItem('users', JSON.stringify(updatedUsers));
-      
-      setCurrentUser(newUser);
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-      setShowLoginModal(false);
-      setLoginForm({ email: '', password: '', name: '', isRegistering: false });
-      navigate('/');
-    };
-
-    return { handleLogin, handleRegister };
-  };
-
   const handleLogout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
@@ -198,197 +392,6 @@ export default function App() {
 
     setCartItems(updatedCart);
     localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-  };
-
-  const LoginModal = () => {
-    const { handleLogin, handleRegister } = LoginHandler();
-
-    return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000
-      }}>
-        <div style={{
-          background: 'white',
-          padding: '40px',
-          borderRadius: '16px',
-          width: '90%',
-          maxWidth: '400px',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.3)'
-        }}>
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '30px'
-          }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              padding: '12px',
-              borderRadius: '12px',
-              display: 'inline-block',
-              marginBottom: '16px'
-            }}>
-              <Book size={32} color="white" />
-            </div>
-            <h2 style={{ margin: 0, color: '#333' }}>
-              {loginForm.isRegistering ? 'Create Account' : 'Welcome Back'}
-            </h2>
-            <p style={{ margin: '8px 0 0', color: '#666' }}>
-              {loginForm.isRegistering 
-                ? 'Join Bookworm today' 
-                : 'Sign in to your account'
-              }
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gap: '20px' }}>
-            {loginForm.isRegistering && (
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={loginForm.name}
-                  onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e1e5e9',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                  placeholder="Enter your full name"
-                />
-              </div>
-            )}
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={loginForm.email}
-                onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '2px solid #e1e5e9',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                Password
-              </label>
-              <input
-                type="password"
-                value={loginForm.password}
-                onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '2px solid #e1e5e9',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-                placeholder="Enter your password"
-              />
-            </div>
-
-            <div style={{ marginTop: '10px' }}>
-              <button
-                onClick={loginForm.isRegistering ? handleRegister : handleLogin}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  marginBottom: '16px'
-                }}
-              >
-                {loginForm.isRegistering ? 'Create Account' : 'Sign In'}
-              </button>
-
-              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <span style={{ color: '#666', fontSize: '14px' }}>
-                  {loginForm.isRegistering ? 'Already have an account?' : "Don't have an account?"}
-                </span>
-                <button
-                  onClick={() => setLoginForm({
-                    ...loginForm, 
-                    isRegistering: !loginForm.isRegistering
-                  })}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#667eea',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    marginLeft: '5px'
-                  }}
-                >
-                  {loginForm.isRegistering ? 'Sign In' : 'Sign Up'}
-                </button>
-              </div>
-
-              {/* Demo Credentials */}
-              <div style={{
-                background: '#f8f9fa',
-                padding: '15px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                color: '#666'
-              }}>
-                <strong>Demo Credentials:</strong><br/>
-                Admin: admin@bookworm.com / admin123<br/>
-                User: john@example.com / user123
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setShowLoginModal(false)}
-            style={{
-              position: 'absolute',
-              top: '15px',
-              right: '15px',
-              background: 'none',
-              border: 'none',
-              fontSize: '24px',
-              cursor: 'pointer',
-              color: '#666'
-            }}
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    );
   };
 
   const GuestHeader = () => (
@@ -595,7 +598,13 @@ export default function App() {
         )}
 
         {/* Login Modal */}
-        {showLoginModal && <LoginModal />}
+        <LoginModal 
+          showLoginModal={showLoginModal}
+          setShowLoginModal={setShowLoginModal}
+          loginForm={loginForm}
+          setLoginForm={setLoginForm}
+          setCurrentUser={setCurrentUser}
+        />
       </div>
     </Router>
   );
