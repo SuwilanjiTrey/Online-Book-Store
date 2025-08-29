@@ -2,6 +2,7 @@
 import React from 'react';
 import { ShoppingCart, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { cartService, orderService } from '../config/firebaseServices';
+import PaymentModal from './PaymentModal';
 import './Styles/cart.css';
 
 export default function Cart({ currentUser }) {
@@ -9,6 +10,7 @@ export default function Cart({ currentUser }) {
   const [loading, setLoading] = React.useState(true);
   const [isCheckingOut, setIsCheckingOut] = React.useState(false);
   const [updating, setUpdating] = React.useState({});
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
 
   React.useEffect(() => {
     if (currentUser) {
@@ -68,6 +70,26 @@ export default function Cart({ currentUser }) {
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + (item.book.price * item.quantity), 0);
+  };
+
+  // This function is now the callback from the modal
+  const handlePaymentSuccess = async () => {
+    setIsCheckingOut(true);
+    try {
+      const totalAmount = calculateTotal();
+      
+      await orderService.createOrder(currentUser.id, cartItems, totalAmount);
+      
+      await cartService.clearCart(currentUser.id);
+
+      alert('Payment successful! Your order has been placed.');
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      alert('An error occurred during checkout. Please try again.');
+    } finally {
+      setIsCheckingOut(false);
+      setShowPaymentModal(false);
+    }
   };
 
   const completeOrder = async () => {
@@ -252,7 +274,7 @@ export default function Cart({ currentUser }) {
             
             <button 
               className="checkout-btn"
-              onClick={completeOrder}
+              onClick={() => setShowPaymentModal(true)}
               disabled={isCheckingOut || cartItems.length === 0}
               style={{
                 background: isCheckingOut ? '#ccc' : '',
@@ -282,6 +304,12 @@ export default function Cart({ currentUser }) {
                 </>
               )}
             </button>
+            <PaymentModal
+              show={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+              totalAmount={calculateTotal()}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
             
             <div style={{
               textAlign: 'center',
